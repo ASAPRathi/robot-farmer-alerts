@@ -89,12 +89,16 @@ async function runScreener() {
 
 async function screenTicker(ticker) {
   try {
-    // Fetch minute aggregates (last 100 minutes)
+    // Fetch minute aggregates (last 4 hours, same day only)
     const now = new Date();
     const from = new Date(now);
     from.setHours(from.getHours() - 4); // Last 4 hours
 
-    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/minute/${formatDate(from)}/${formatDate(now)}?adjusted=true&sort=asc&apiKey=${POLYGON_API_KEY}`;
+    // For minute aggregates, Polygon needs YYYY-MM-DD format (not timestamps)
+    const fromDate = formatDateOnly(from);
+    const toDate = formatDateOnly(now);
+
+    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/minute/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
 
     const response = await axios.get(url);
     const data = response.data;
@@ -235,6 +239,13 @@ async function sendSlackAlert(stock, rank) {
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
+
+function formatDateOnly(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 function formatDate(date) {
   const year = date.getFullYear();
