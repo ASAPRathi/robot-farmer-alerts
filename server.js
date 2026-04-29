@@ -97,7 +97,7 @@ async function screenTicker(ticker) {
     const fromDate = formatDateOnly(from);
     const toDate = formatDateOnly(now);
 
-    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+    const url = `https://api.massive.io/v2/aggs/ticker/${ticker}/range/1/day/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
 
     const response = await axios.get(url);
     const data = response.data;
