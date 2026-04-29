@@ -89,16 +89,15 @@ async function runScreener() {
 
 async function screenTicker(ticker) {
   try {
-    // Fetch minute aggregates (last 4 hours, same day only)
+    // Fetch daily aggregates (300 calendar days = ~200 trading days for MA200)
     const now = new Date();
     const from = new Date(now);
-    from.setHours(from.getHours() - 4); // Last 4 hours
+    from.setDate(from.getDate() - 300); // Last 300 calendar days
 
-    // For minute aggregates, Polygon needs YYYY-MM-DD format (not timestamps)
     const fromDate = formatDateOnly(from);
     const toDate = formatDateOnly(now);
 
-    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/minute/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
+    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${fromDate}/${toDate}?adjusted=true&sort=asc&limit=1000&apiKey=${POLYGON_API_KEY}`;
 
     const response = await axios.get(url);
     const data = response.data;
